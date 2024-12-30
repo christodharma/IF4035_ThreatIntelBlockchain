@@ -1,21 +1,28 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-contract Ioc {
+import {VerificationOracleClientInterface} from "./VerificationOracleClientInterface.sol";
+import {VerificationOracleInterface} from "./VerificationOracleInterface.sol";
+
+contract Ioc is VerificationOracleClientInterface {
     address public owner;
     bytes32 public hash;
     string public fileCid;
     uint public price;
     uint public purchaseCount;
-    
-    event Purchased(address buyer);
+    bool public isVerified;
+    bool public isMalware;
+
+    event IocPurchased(address iocAddress, address buyer);
+    event IocVerified(address iocAddress, bool isMalware);
 
     constructor(
         address _owner,
         bytes32 _hash,
         string memory _fileCid,
-        uint _price
-    ) payable {
+        uint _price,
+        address _oracleAddress
+    ) {
         require(_owner != address(0), "You must provide an owner");
 
         owner = _owner;
@@ -23,6 +30,11 @@ contract Ioc {
         fileCid = _fileCid;
         price = _price;
         purchaseCount = 0;
+
+        VerificationOracleInterface(_oracleAddress).requestVerification(
+            address(this),
+            hash
+        );
     }
 
     function purchase() public payable {
@@ -32,6 +44,7 @@ contract Ioc {
             msg.sender == tx.origin,
             "Contracts are not allowed to purchase"
         );
+        require(isVerified, "Item must be verified");
 
         purchaseCount++;
 
@@ -40,14 +53,13 @@ contract Ioc {
         }
         payable(owner).transfer(price);
 
-        emit Purchased(msg.sender);
+        emit IocPurchased(address(this), msg.sender);
     }
 
-    function getIoc()
-        public
-        view
-        returns (address, bytes32, string memory, uint, uint)
-    {
-        return (owner, hash, fileCid, price, purchaseCount);
+    function verificationCallback(bool _isMalware) public {
+        isVerified = true;
+        isMalware = _isMalware;
+
+        emit IocVerified(address(this), isMalware);
     }
 }

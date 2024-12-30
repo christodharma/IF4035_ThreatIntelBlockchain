@@ -23,10 +23,11 @@ contract IocFactory {
         string memory _fileCid,
         uint price
     ) public {
-        Ioc newProject = new Ioc(msg.sender, hash, _fileCid, price);
-        publishedIocs.push(address(newProject));
+        Ioc newIoc = new Ioc(msg.sender, hash, _fileCid, price, oracleAddress);
 
-        emit IocPublished(address(newProject), msg.sender, hash, price);
+        publishedIocs.push(address(newIoc));
+
+        emit IocPublished(address(newIoc), msg.sender, hash, price);
     }
 
     function getPublishedIocs() public view returns (address[] memory) {
