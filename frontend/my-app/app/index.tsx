@@ -1,37 +1,33 @@
+import ThreatCard from '@/components/ThreatCard';
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { Card, Chip, Text } from 'react-native-paper';
 
-interface GridItem {
-  id: string;
-  title: string;
-}
-
-const data: GridItem[] = Array.from({ length: 20 }, (_, index) => ({
+const data: ThreatCard[] = Array.from({ length: 21 }, (_, index) => ({
   id: index.toString(),
-  title: `Threat case ${index + 1}`,
+  owner: `${index + 1}`,
+  price: index + 1,
+  purchaseCount: index + 1,
+  isVerified: true,
+  isMalware: false,
 }));
 
 export default function HomeScreen() {
 
-  const renderItem = ({ item }: { item: GridItem }) => (
-    <Card style={styles.card}>
-      <Card.Content>
-        <Text style={styles.text}>{item.title}</Text>
-      </Card.Content>
-    </Card>
+  const renderItem = ({ item }: { item: ThreatCard }) => (
+    <ThreatCard id={item.id} owner={item.owner} price={item.price} purchaseCount={item.purchaseCount} isVerified={item.isVerified} isMalware={item.isMalware} />
   );
 
   return (
     <View style={styles.container}>
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      numColumns={5}
-      columnWrapperStyle={styles.row}
-    />
-  </View>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={5}
+        columnWrapperStyle={styles.row}
+      />
+    </View>
   );
 }
 
@@ -41,16 +37,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   row: {
-    justifyContent: 'space-between',
-  },
-  card: {
-    flex: 1,
-    margin: 5,
-    borderRadius: 8,
-    elevation: 4,
-  },
-  text: {
-    fontSize: 16,
-    textAlign: 'center',
+    justifyContent: 'space-evenly',
+    paddingVertical: 10,
   },
 });
