@@ -1,14 +1,12 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import * as React from 'react';
+import { PaperProvider } from 'react-native-paper';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-// import '../global';
-// import Web3 from 'web3';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -23,11 +21,6 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-    // const web3 = new Web3(
-    //   new Web3.providers.HttpProvider('https://mainnet.infura.io/')
-    // );
-    // web3.eth.getBlock('latest').then(console.log)
-  
   }, [loaded]);
 
   if (!loaded) {
@@ -35,12 +28,21 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <PaperProvider>
+      <React.Fragment>
+      {Platform.OS === 'web' ? (
+        <style type="text/css">{`
+          @font-face {
+            font-family: 'MaterialCommunityIcons';
+            src: url(${require('react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
+          }
+        `}</style>
+      ) : null}
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      </React.Fragment>
+    </PaperProvider>
   );
 }
