@@ -1,12 +1,13 @@
+import Header from '@/components/Header';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { Platform } from 'react-native';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
 import * as React from 'react';
-import { PaperProvider } from 'react-native-paper';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useEffect } from 'react';
+import { Platform, View } from 'react-native';
+import { PaperProvider, Searchbar, Text } from 'react-native-paper';
+import 'react-native-reanimated';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,7 +40,7 @@ export default function RootLayout() {
         `}</style>
       ) : null}
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ header: () => <Header/>}} />
         {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
         <Stack.Screen name="+not-found" />
       </Stack>
