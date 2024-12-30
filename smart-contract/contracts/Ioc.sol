@@ -7,9 +7,7 @@ contract Ioc {
     string public fileCid;
     uint public price;
     uint public purchaseCount;
-
-    mapping(address => bool) public hasPurchased;
-
+    
     event Purchased(address buyer);
 
     constructor(
@@ -35,12 +33,6 @@ contract Ioc {
             "Contracts are not allowed to purchase"
         );
 
-        if (hasPurchased[msg.sender]) {
-            emit Purchased(msg.sender);
-            return;
-        }
-
-        hasPurchased[msg.sender] = true;
         purchaseCount++;
 
         if (msg.value > price) {
