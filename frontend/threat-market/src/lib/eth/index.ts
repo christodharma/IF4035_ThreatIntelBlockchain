@@ -9,9 +9,15 @@ export function checkEthereumSupport() {
 
 export async function requestAccounts() {
     if (checkEthereumSupport()) {
-        await window.ethereum.request({ method: "eth_requestAccounts" })
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
+        document.cookie = `eth_account=${accounts}; path=/; max-age=${60 * 60 * 24 * 7}; secure; SameSite=Strict`;
     }
 }
+
+export function getEthAccountFromCookie() {
+    const match = document.cookie.match(/(^|;) ?eth_account=([^;]*)(;|$)/);
+    return match ? match[2] : null;
+  }
 
 export async function fetchContract() {
     if (checkEthereumSupport()) {

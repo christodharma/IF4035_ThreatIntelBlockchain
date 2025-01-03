@@ -1,15 +1,17 @@
 'use client'
 
+import { getEthAccountFromCookie, requestAccounts } from '@/lib/eth';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, Checkbox, FormControlLabel, FormGroup, InputAdornment, Modal, TextField } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import InputBase from '@mui/material/InputBase';
+import Stack from '@mui/material/Stack';
 import { alpha, styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -55,6 +57,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function SearchAppBar() {
   const [IsModalOpen, setIsModalOpen] = useState(false)
+  const [EthAccount, setEthAccount] = useState<string | null>(null)
+  useEffect(() => {
+    setEthAccount(getEthAccountFromCookie());
+  }, [])
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -68,12 +75,15 @@ export default function SearchAppBar() {
             >
               Threat Intelligence Marketplace
             </Typography>
-            {/* <Button color="inherit" variant='contained' onClick={() => requestAccounts()}>
-              <Typography color='primary'>Connect</Typography>
-            </Button> */}
-            <Button color="inherit" onClick={() => setIsModalOpen(true)}>
-              <Typography>Sell</Typography>
-            </Button>
+            <Stack direction={'row'} spacing={2} alignItems={'center'}>
+              {EthAccount === null && <Button color="inherit" variant='contained' onClick={() => requestAccounts()}>
+                <Typography color='primary'>Connect</Typography>
+              </Button>}
+              {EthAccount !== null && <Typography color='inherit' >{EthAccount}</Typography>}
+              <Button color="primary" variant='contained' onClick={() => setIsModalOpen(true)}>
+                <Typography>Sell</Typography>
+              </Button>
+            </Stack>
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -86,7 +96,7 @@ export default function SearchAppBar() {
           </Toolbar>
         </AppBar>
       </Box>
-      <SellModal open={IsModalOpen} handleClose={() => { setIsModalOpen(false) }} />
+      <SellModal open={IsModalOpen} handleClose={() => { setIsModalOpen(false) }} account={EthAccount} />
     </>
   );
 }
@@ -106,9 +116,10 @@ const VisuallyHiddenInput = styled('input')({
 interface SellModalProps {
   open: boolean;
   handleClose: () => void;
+  account: string | null
 }
 
-function SellModal({ open, handleClose }: SellModalProps) {
+function SellModal({ open, handleClose, account }: SellModalProps) {
   return (
     <Modal
       open={open}
@@ -117,43 +128,45 @@ function SellModal({ open, handleClose }: SellModalProps) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography variant="h5" component="div">
-          Publish Threat Intelligence Information
-        </Typography>
-        <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>By ...</Typography>
-        <Button
-          fullWidth
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload files
-          <VisuallyHiddenInput
-            type="file"
-            onChange={(event) => console.log(event.target.files)}
-            multiple
-          />
-        </Button>
-        <FormGroup row>
-          <FormControlLabel control={<Checkbox color='error' />} label="Is this malware?" />
-          <FormControlLabel control={<Checkbox color='success' />} label="Is this verified?" />
-        </FormGroup>
-        <TextField label="Price" variant="outlined" type='number' fullWidth slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                ETH
-              </InputAdornment>
-            ),
-          },
-        }} />
-        <div>
-          <Button size="large" color="inherit" variant='contained' fullWidth>
-            <Typography color='textPrimary'>Sell</Typography>
+        <Stack spacing={2}>
+          <Typography variant="h5" component="div">
+            Publish Threat Intelligence Information
+          </Typography>
+          <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>By {account}</Typography>
+          <Button
+            fullWidth
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload files
+            <VisuallyHiddenInput
+              type="file"
+              onChange={(event) => console.log(event.target.files)}
+              multiple
+            />
           </Button>
-        </div>
+          <FormGroup row>
+            <FormControlLabel control={<Checkbox color='error' />} label="Is this malware?" />
+            <FormControlLabel control={<Checkbox color='success' />} label="Is this verified?" />
+          </FormGroup>
+          <TextField label="Price" variant="outlined" type='number' fullWidth slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  ETH
+                </InputAdornment>
+              ),
+            },
+          }} />
+          <div>
+            <Button size="large" color="inherit" variant='contained' fullWidth>
+              <Typography color='textPrimary'>Sell</Typography>
+            </Button>
+          </div>
+        </Stack>
       </Box>
     </Modal>
   );
