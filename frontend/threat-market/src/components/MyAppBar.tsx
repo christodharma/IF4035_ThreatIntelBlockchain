@@ -1,7 +1,7 @@
 'use client'
 
 import { uploadFile } from '@/lib/api';
-import { getEthAccountFromCookie, requestAccounts } from '@/lib/eth';
+import { getEthAccountFromCookie, requestAccounts, sellIoc } from '@/lib/eth';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, Checkbox, FormControlLabel, FormGroup, InputAdornment, Modal, TextField } from '@mui/material';
@@ -81,7 +81,7 @@ export default function SearchAppBar() {
                 <Typography color='primary'>Connect</Typography>
               </Button>}
               {EthAccount !== null && <Typography color='inherit' >{EthAccount}</Typography>}
-              <Button color="primary" variant='contained' onClick={() => setIsModalOpen(true)}>
+              <Button color="primary" variant='contained' onClick={SubmitSell}>
                 <Typography>Sell</Typography>
               </Button>
             </Stack>
@@ -121,10 +121,14 @@ interface SellModalProps {
 }
 
 function SubmitSell(){
-  
+  sellIoc();
 }
 
 function SellModal({ open, handleClose, account }: SellModalProps) {
+  const [IsMalware, setIsMalware] = useState(false);
+  const [IsVerified, setIsVerified] = useState(false);
+  const [Price, setPrice] = useState(0);
+
   return (
     <Modal
       open={open}
@@ -149,14 +153,14 @@ function SellModal({ open, handleClose, account }: SellModalProps) {
             Upload files
             <VisuallyHiddenInput
               type="file"
-              onChange={(event) => uploadFile(`localhost:3000`, event.target.files.item(0))}
+              onChange={(event) => uploadFile(`localhost:3001`, event.target.files.item(0))}
             />
           </Button>
           <FormGroup row>
-            <FormControlLabel control={<Checkbox color='error' />} label="Is this malware?" />
-            <FormControlLabel control={<Checkbox color='success' />} label="Is this verified?" />
+            <FormControlLabel control={<Checkbox color='error' value={IsMalware} onChange={(event, checked) => setIsMalware(checked)}/>} label="Is this malware?" />
+            <FormControlLabel control={<Checkbox color='success'value={IsVerified} onChange={(event, checked) => setIsVerified(checked)}/>} label="Is this verified?" />
           </FormGroup>
-          <TextField label="Price" variant="outlined" type='number' fullWidth slotProps={{
+          <TextField label="Price" variant="outlined" type='number' fullWidth value={Price} onChange={(event) => setPrice(parseFloat(event.target.value))} slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start">

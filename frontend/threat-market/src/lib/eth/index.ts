@@ -1,7 +1,8 @@
 import { BrowserProvider, ethers } from "ethers";
-import { IocFactory } from '../abi/Ioc.json';
+import IocFactory from '../abi/Ioc.json';
 
 const IocFactoryAddr = `0x5FbDB2315678afecb367f032d93F642f64180aa3`
+const OracleAddr = `0x5FbDB2315678afecb367f032d93F642f64180aa3`
 const Ioc = ``
 
 export function checkEthereumSupport() {
@@ -23,10 +24,10 @@ export async function sellIoc() {
         await requestAccounts();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const provider = new BrowserProvider(window.ethereum as any);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(IocFactoryAddr, IocFactory.abi, provider);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(IocFactoryAddr, IocFactory.abi, signer);
         try {
-            const data = await contract.publishIoc();
+            const data = await contract.publishIoc(OracleAddr);
             console.log('data: ', data);
         } catch (error) {
             console.log('error: ', error);
