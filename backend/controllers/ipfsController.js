@@ -1,11 +1,10 @@
-import fs from "fs";
 import encryptionService from "../services/encryptService.js";
 import * as Signer from "@ucanto/principal/ed25519";
 import {StoreMemory} from "@web3-storage/w3up-client/stores/memory";
 import * as Client from "@web3-storage/w3up-client";
 import * as Proof from '@web3-storage/w3up-client/proof'
 import crypto from "crypto";
-
+import axios from "axios";
 
 export async function initializeWeb3Client() {
   const principal = Signer.parse(process.env.W3_KEY)
@@ -17,44 +16,52 @@ export async function initializeWeb3Client() {
   return client
 }
 
-const generateFileHash = async (filePath) => {
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash("sha256");
-    const input = fs.createReadStream(filePath);
-
-    input
-      .on("data", (chunk) => hash.update(chunk))
-      .on("end", () => resolve(hash.digest("hex")))
-      .on("error", (err) => reject(err));
-  });
+const generateFileHash = (fileBuffer) => {
+  return crypto.createHash("sha256").update(fileBuffer).digest("hex");
 };
 
 export const uploadFile = async (req, res) => {
   try {
     let web3StorageClient = await initializeWeb3Client();
-    const { originalname, path: filePath } = req.file;
-    const hashedFileName = await generateFileHash(filePath);
-    const encryptedFileBuffer = await encryptionService.encryptFileToBuffer(filePath);
+    const { buffer, mimetype } = req.file;
+    const hashedFileName = generateFileHash(buffer);
+    const encryptedFileBuffer = await encryptionService.encryptFileToBuffer(buffer);
     const file = new File([encryptedFileBuffer], `${hashedFileName}`, {
-      type: req.file.mimetype,
+      type: mimetype,
     });
     const cid = await web3StorageClient.uploadFile(file);
     res.status(200).json({ cid: cid.toString() });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ success: false, message: 'File upload failed.' });
+    console.error("Error uploading file:", error);
+    res.status(500).json({ success: false, message: "File upload failed." });
   }
 };
 
-export const handlePurchase = async (req, res) => {
+export const handleDownload = async (req, res) => {
+  const { cid } = req.query;
+
+  if (!cid) {
+    return res.status(400).json({ success: false, message: "CID is required" });
+  }
+
   try {
-    const { sampleId, buyerAddress } = req.body;
-    const decryptedPath = await encryptionService.decryptFile(sampleId);
-    const downloadLink = `http://......../uploads/${path.basename(decryptedPath)}`;
-    res.status(200).json({ success: true, downloadLink });
-  } catch (err) {
-    console.error("Error handling purchase:", err);
-    res.status(500).json({ success: false, message: "Purchase handling failed." });
+    const url = `https://${cid}.ipfs.w3s.link`;
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    const fileBuffer = Buffer.from(response.data);
+    const decryptedFileBuffer = await encryptionService.decryptFileBuffer(fileBuffer);
+    const hash = generateFileHash(decryptedFileBuffer);
+    const contentType = response.headers["content-type"] || "application/octet-stream";
+    res.set({
+      "Content-Type": contentType,
+      "Content-Disposition": `attachment; filename="${hash}"`,
+    });
+
+    res.send(decryptedFileBuffer);
+  } catch (error) {
+    console.error("Error fetching file from IPFS:", error.message);
+    res.status(500).json({ success: false, message: "Failed to download file" });
   }
 };
+
+
 

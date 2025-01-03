@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
-const { uploadFile, handlePurchase } = require("../controllers/ipfsController");
+const { uploadFile, handleDownload } = require("../controllers/ipfsController");
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -9,6 +9,6 @@ const upload = multer({
 });
 
 router.post("/upload", upload.single("file"), uploadFile);
-router.post("/purchase", handlePurchase);
+router.get("/download", handleDownload);
 
 module.exports = router;
