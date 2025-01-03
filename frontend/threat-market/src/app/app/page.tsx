@@ -1,9 +1,9 @@
 'use client'
+import ThreatCard from "@/components/Card";
+import LearnMoreModal from "@/components/Modal";
 import { Threat } from "@/types/Threat";
 import { Grid2 } from "@mui/material";
 import { useState } from "react";
-import ThreatCard from "@/components/Card";
-import LearnMoreModal from "@/components/Modal";
 
 export default function App() {
     const noThreatData: Threat = {
