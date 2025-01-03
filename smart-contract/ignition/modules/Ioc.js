@@ -1,5 +1,5 @@
-import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import { config } from 'dotenv';
+const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+const { config } = require('dotenv');
 
 config()
 
@@ -17,4 +17,4 @@ const IocModule = buildModule("IocModule", (m) => {
   return { ioc };
 });
 
-export default IocModule;
+module.exports = IocModule;

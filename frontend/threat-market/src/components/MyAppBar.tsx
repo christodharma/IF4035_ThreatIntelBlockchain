@@ -1,5 +1,6 @@
 'use client'
 
+import { uploadFile } from '@/lib/api';
 import { getEthAccountFromCookie, requestAccounts } from '@/lib/eth';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SearchIcon from '@mui/icons-material/Search';
@@ -119,6 +120,10 @@ interface SellModalProps {
   account: string | null
 }
 
+function SubmitSell(){
+  
+}
+
 function SellModal({ open, handleClose, account }: SellModalProps) {
   return (
     <Modal
@@ -144,8 +149,7 @@ function SellModal({ open, handleClose, account }: SellModalProps) {
             Upload files
             <VisuallyHiddenInput
               type="file"
-              onChange={(event) => console.log(event.target.files)}
-              multiple
+              onChange={(event) => uploadFile(`localhost:3000`, event.target.files.item(0))}
             />
           </Button>
           <FormGroup row>
@@ -162,7 +166,7 @@ function SellModal({ open, handleClose, account }: SellModalProps) {
             },
           }} />
           <div>
-            <Button size="large" color="inherit" variant='contained' fullWidth>
+            <Button size="large" color="inherit" variant='contained' fullWidth onClick={SubmitSell}>
               <Typography color='textPrimary'>Sell</Typography>
             </Button>
           </div>

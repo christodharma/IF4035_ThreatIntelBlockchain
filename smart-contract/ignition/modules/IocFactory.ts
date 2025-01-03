@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config()
 
-const ProjectFactoryModule = buildModule("IocFactoryModule", (m) => {
+const IocFactoryModule = buildModule("IocFactoryModule", (m) => {
     const oracleAddress = process.env.ORACLE_ADDRESS;
 
     if (!oracleAddress) {
@@ -17,4 +17,4 @@ const ProjectFactoryModule = buildModule("IocFactoryModule", (m) => {
     return { iocFactory };
 });
 
-export default ProjectFactoryModule;
+export default IocFactoryModule;

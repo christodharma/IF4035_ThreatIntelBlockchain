@@ -1,9 +1,9 @@
-import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import { config } from 'dotenv';
+const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+const { config } = require('dotenv');
 
 config()
 
-const ProjectFactoryModule = buildModule("ProjectFactoryModule", (m) => {
+const IocFactoryModule = buildModule("IocFactoryModule", (m) => {
   const oracleAddress = process.env.ORACLE_ADDRESS;
 
   if (!oracleAddress) {
@@ -12,9 +12,9 @@ const ProjectFactoryModule = buildModule("ProjectFactoryModule", (m) => {
 
   console.log(`Deploying with oracle address: ${oracleAddress}`);
 
-  const projectFactory = m.contract("ProjectFactory", [oracleAddress]);
+  const iocFactory = m.contract("IocFactory", [oracleAddress]);
 
-  return { projectFactory };
+  return { iocFactory };
 });
 
-export default ProjectFactoryModule;
+module.exports = IocFactoryModule;
