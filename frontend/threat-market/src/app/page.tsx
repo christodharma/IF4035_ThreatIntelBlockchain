@@ -1,5 +1,5 @@
 'use client'
-import { checkEthereumSupport } from "@/lib/eth";
+import { checkEthereumSupport, requestAccounts } from "@/lib/eth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -11,7 +11,9 @@ export default function Home() {
     if (!hasMetamask) {
       alert("There's no ethereum support detected!")
     } else {
-      router.push('/app');
+      requestAccounts().then(
+        () => {router.push('/app')}
+      )
     }
   }, [router])
 

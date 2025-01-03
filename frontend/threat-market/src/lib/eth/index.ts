@@ -7,6 +7,12 @@ export function checkEthereumSupport() {
     return false;
 }
 
+export async function requestAccounts() {
+    if (checkEthereumSupport()) {
+        await window.ethereum.request({ method: "eth_requestAccounts" })
+    }
+}
+
 export async function fetchContract() {
     if (checkEthereumSupport()) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

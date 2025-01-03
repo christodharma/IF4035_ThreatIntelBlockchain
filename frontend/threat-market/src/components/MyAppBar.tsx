@@ -68,6 +68,9 @@ export default function SearchAppBar() {
             >
               Threat Intelligence Marketplace
             </Typography>
+            {/* <Button color="inherit" variant='contained' onClick={() => requestAccounts()}>
+              <Typography color='primary'>Connect</Typography>
+            </Button> */}
             <Button color="inherit" onClick={() => setIsModalOpen(true)}>
               <Typography>Sell</Typography>
             </Button>
