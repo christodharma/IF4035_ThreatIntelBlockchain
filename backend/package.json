@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@web3-storage/w3up-client": "^17.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ipfs-http-client": "^50.1.2",
+    "multer": "^1.4.5-lts.1",
+    "multiformats": "^13.3.1"
+  }
+}
