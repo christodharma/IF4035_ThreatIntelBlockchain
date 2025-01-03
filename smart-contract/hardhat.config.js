@@ -1,6 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 
-/** @type import('hardhat/config').HardhatUserConfig 127.0.0.1:57062 */
+/** @type import('hardhat/config').HardhatUserConfig*/
 module.exports = {
   solidity: "0.8.28",
   networks: {
