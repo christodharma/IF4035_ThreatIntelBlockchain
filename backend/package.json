@@ -2,6 +2,7 @@
   "dependencies": {
     "@web3-storage/w3up-client": "^17.1.1",
     "axios": "^1.7.9",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "ipfs-http-client": "^50.1.2",
@@ -12,7 +13,6 @@
     "nodemon": "^3.1.9"
   },
   "scripts": {
-  "dev": "nodemon app.js"
-}
-
+    "dev": "nodemon app.js"
+  }
 }
