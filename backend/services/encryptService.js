@@ -5,16 +5,19 @@ const path = require("path");
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const IV_LENGTH = 16;
 
-exports.encryptFileToBuffer = async (filePath) => {
-  const iv = crypto.randomBytes(IV_LENGTH);
+exports.encryptFileToBuffer = async (fileBuffer) => {
+  const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY), iv);
-  const input = fs.createReadStream(filePath);
-  const chunks = [];
-  return new Promise((resolve, reject) => {
-    input
-      .pipe(cipher)
-      .on("data", (chunk) => chunks.push(chunk))
-      .on("end", () => resolve(Buffer.concat([iv, ...chunks])))
-      .on("error", (err) => reject(err));
-  });
+  const encryptedBuffer = Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
+  return Buffer.concat([iv, encryptedBuffer]);
 };
+
+exports.decryptFileBuffer = async (encryptedBuffer) => {
+  const iv = encryptedBuffer.slice(0, 16);
+  const encryptedData = encryptedBuffer.slice(16);
+  const decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY), iv);
+  const decryptedBuffer = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
+  return decryptedBuffer;
+};
+
+
