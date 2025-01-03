@@ -25,12 +25,14 @@ export const uploadFile = async (req, res) => {
     let web3StorageClient = await initializeWeb3Client();
     const { buffer, mimetype } = req.file;
     const hashedFileName = generateFileHash(buffer);
-    const encryptedFileBuffer = await encryptionService.encryptFileToBuffer(buffer);
+    const encryptedFileBuffer = await encryptionService.encrypt(buffer);
     const file = new File([encryptedFileBuffer], `${hashedFileName}`, {
       type: mimetype,
     });
     const cid = await web3StorageClient.uploadFile(file);
-    res.status(200).json({ cid: cid.toString() });
+    const encryptedcid = (await encryptionService.encrypt(cid.toString())).toString("hex")
+    
+    res.status(200).json({ cid: encryptedcid });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(500).json({ success: false, message: "File upload failed." });
@@ -43,12 +45,13 @@ export const handleDownload = async (req, res) => {
   if (!cid) {
     return res.status(400).json({ success: false, message: "CID is required" });
   }
+  const decryptedcid = await encryptionService.decrypt(Buffer.from(cid, 'hex'));
 
   try {
-    const url = `https://${cid}.ipfs.w3s.link`;
+    const url = `https://${decryptedcid}.ipfs.w3s.link`;
     const response = await axios.get(url, { responseType: "arraybuffer" });
     const fileBuffer = Buffer.from(response.data);
-    const decryptedFileBuffer = await encryptionService.decryptFileBuffer(fileBuffer);
+    const decryptedFileBuffer = await encryptionService.decrypt(fileBuffer);
     const hash = generateFileHash(decryptedFileBuffer);
     const contentType = response.headers["content-type"] || "application/octet-stream";
     res.set({
