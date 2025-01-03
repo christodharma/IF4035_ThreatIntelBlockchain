@@ -1,6 +1,8 @@
 import { ethers } from "hardhat";
 import axios from "axios";
-import "dotenv/config"
+import { config } from "dotenv";
+
+config()
 
 import Oracle from "./artifacts/contracts/Oracle.sol/Oracle.json";
 

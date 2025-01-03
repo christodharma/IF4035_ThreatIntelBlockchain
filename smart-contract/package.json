@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/IocFactory.ts --network localhost"
+  },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "hardhat": "^2.22.17"
   },
   "devDependencies": {

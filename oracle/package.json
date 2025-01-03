@@ -1,5 +1,9 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "start": "npx hardhat run main.ts --network localhost",
+    "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/Oracle.ts --network localhost"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.17"

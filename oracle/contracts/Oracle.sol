@@ -16,7 +16,7 @@ contract Oracle is Ownable, VerificationOracleInterface {
 
     mapping(uint => RequestData) private requests;
 
-    constructor(address owner) Ownable(owner) {}
+    constructor() Ownable(msg.sender) {}
 
     function requestVerification(address requester, bytes32 hash) public {
         requests[requestId] = RequestData(requester, hash);
