@@ -20,9 +20,8 @@ contract Oracle is Ownable, VerificationOracleInterface {
 
     function requestVerification(address requester, bytes32 hash) public {
         requests[requestId] = RequestData(requester, hash);
-        requestId++;
 
-        emit Request(requestId, hash);
+        emit Request(requestId++, hash);
     }
 
     function responseCallback(
