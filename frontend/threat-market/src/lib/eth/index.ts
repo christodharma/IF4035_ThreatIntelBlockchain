@@ -1,4 +1,5 @@
 import { BrowserProvider, ethers } from "ethers";
+import { IocFactory } from '../abi/Ioc.json';
 
 const IocFactoryAddr = `0x5FbDB2315678afecb367f032d93F642f64180aa3`
 const Ioc = ``
@@ -17,14 +18,15 @@ export async function requestAccounts() {
     }
 }
 
-export async function sellIoc(){
-    if (checkEthereumSupport()){
+export async function sellIoc() {
+    if (checkEthereumSupport()) {
         await requestAccounts();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const provider = new BrowserProvider(window.ethereum as any);
-        const contract = new ethers.Contract("", "", provider);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(IocFactoryAddr, IocFactory.abi, provider);
         try {
-            const data = await contract.publicIoc(); //TODO replace `get` with function
+            const data = await contract.publishIoc();
             console.log('data: ', data);
         } catch (error) {
             console.log('error: ', error);
@@ -35,7 +37,7 @@ export async function sellIoc(){
 export function getEthAccountFromCookie() {
     const match = document.cookie.match(/(^|;) ?eth_account=([^;]*)(;|$)/);
     return match ? match[2] : null;
-  }
+}
 
 export async function fetchContract() {
     if (checkEthereumSupport()) {
