@@ -6,7 +6,7 @@ import {VerificationOracleInterface} from "./VerificationOracleInterface.sol";
 
 contract Ioc is VerificationOracleClientInterface {
     address public owner;
-    bytes32 public hash;
+    string public hash;
     string public fileCid;
     uint public price;
     uint public purchaseCount;
@@ -18,7 +18,7 @@ contract Ioc is VerificationOracleClientInterface {
 
     constructor(
         address _owner,
-        bytes32 _hash,
+        string memory _hash,
         string memory _fileCid,
         uint _price,
         address _oracleAddress

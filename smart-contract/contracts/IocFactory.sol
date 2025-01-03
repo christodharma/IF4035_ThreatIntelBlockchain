@@ -10,7 +10,7 @@ contract IocFactory {
     event IocPublished(
         address iocAddress,
         address owner,
-        bytes32 hash,
+        string hash,
         uint price
     );
 
@@ -19,7 +19,7 @@ contract IocFactory {
     }
 
     function publishIoc(
-        bytes32 hash,
+        string memory hash,
         string memory _fileCid,
         uint price
     ) public {

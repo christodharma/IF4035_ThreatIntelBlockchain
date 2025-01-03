@@ -11,14 +11,14 @@ contract Oracle is Ownable, VerificationOracleInterface {
 
     struct RequestData {
         address requester;
-        bytes32 hash;
+        string hash;
     }
 
     mapping(uint => RequestData) private requests;
 
     constructor() Ownable(msg.sender) {}
 
-    function requestVerification(address requester, bytes32 hash) public {
+    function requestVerification(address requester, string memory hash) public {
         requests[requestId] = RequestData(requester, hash);
 
         emit Request(requestId++, hash);
